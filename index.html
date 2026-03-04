@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discover Your Appreciation Superpower</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .quiz-container {
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      max-width: 640px;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 6px;
+      background: #e9ecef;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #667eea, #764ba2);
+      transition: width 0.4s ease;
+      border-radius: 0 3px 3px 0;
+    }
+
+    .screen {
+      display: none;
+      padding: 40px 36px;
+    }
+
+    .screen.active {
+      display: block;
+      animation: fadeIn 0.35s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Welcome */
+    .welcome {
+      text-align: center;
+    }
+
+    .welcome .emoji-hero {
+      font-size: 64px;
+      margin-bottom: 16px;
+    }
+
+    .welcome h1 {
+      font-size: 26px;
+      color: #2d3748;
+      margin-bottom: 8px;
+    }
+
+    .welcome .subtitle {
+      color: #718096;
+      font-size: 15px;
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* Questions */
+    .question-number {
+      font-size: 13px;
+      font-weight: 600;
+      color: #764ba2;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .question-text {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2d3748;
+      line-height: 1.4;
+      margin-bottom: 24px;
+    }
+
+    .answers {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .answer-btn {
+      background: #f7f8fc;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 15px;
+      color: #4a5568;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+      line-height: 1.4;
+    }
+
+    .answer-btn:hover {
+      border-color: #764ba2;
+      background: #f5f0ff;
+      color: #2d3748;
+    }
+
+    .answer-btn.selected {
+      border-color: #764ba2;
+      background: #764ba2;
+      color: #fff;
+    }
+
+    /* Result */
+    .result {
+      text-align: center;
+    }
+
+    .result .emoji-hero {
+      font-size: 72px;
+      margin-bottom: 12px;
+    }
+
+    .result h2 {
+      font-size: 28px;
+      color: #2d3748;
+      margin-bottom: 6px;
+    }
+
+    .result .superpower-name {
+      font-size: 40px;
+      font-weight: 800;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    .result .description {
+      color: #4a5568;
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 12px;
+    }
+
+    .result .closing {
+      color: #718096;
+      font-size: 14px;
+      font-style: italic;
+      line-height: 1.6;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 14px 36px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(118, 75, 162, 0.35);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #f7f8fc;
+      color: #764ba2;
+      border: 2px solid #764ba2;
+      margin-top: 24px;
+    }
+
+    .btn-secondary:hover {
+      background: #f5f0ff;
+      box-shadow: 0 4px 12px rgba(118, 75, 162, 0.15);
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-container">
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+  </div>
+
+  <!-- Welcome Screen -->
+  <div class="screen active" id="welcome">
+    <div class="welcome">
+      <div class="emoji-hero">✨</div>
+      <h1>Discover Your Appreciation Superpower</h1>
+      <p class="subtitle">
+        We all have a unique way of showing appreciation to the people around us.
+        Answer 5 quick questions to find yours!
+      </p>
+      <button class="btn" onclick="startQuiz()">Let's Go!</button>
+    </div>
+  </div>
+
+  <!-- Question Screen -->
+  <div class="screen" id="questionScreen">
+    <div class="question-number" id="questionNumber"></div>
+    <div class="question-text" id="questionText"></div>
+    <div class="answers" id="answersContainer"></div>
+  </div>
+
+  <!-- Result Screen -->
+  <div class="screen" id="resultScreen">
+    <div class="result">
+      <div class="emoji-hero" id="resultEmoji"></div>
+      <h2>You are the</h2>
+      <div class="superpower-name" id="resultName"></div>
+      <p class="description" id="resultDesc1"></p>
+      <p class="description" id="resultDesc2"></p>
+      <p class="closing" id="resultClosing"></p>
+      <button class="btn btn-secondary" onclick="restartQuiz()">Take It Again</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const questions = [
+    {
+      text: "Your teammate just completed an extremely stressful case. What's your first reaction?",
+      answers: [
+        { text: "Drop everything to tell them they did an incredible job", type: "Spark" },
+        { text: "Offer to help with the follow-up tasks so they can catch a breather", type: "Supporter" },
+        { text: "Send them a personal message to thank them for the effort they put into it", type: "Heartwriter" },
+        { text: "Make sure the team hears about it", type: "Amplifier" },
+        { text: "Declare it a moment worthy of a mini victory dance", type: "Cheerleader" }
+      ]
+    },
+    {
+      text: "Someone gives you helpful advice on a new case. What do you do?",
+      answers: [
+        { text: "Give them a 'Heartfelt thank you' badge", type: "Cheerleader" },
+        { text: "Mention to others how helpful their advice was", type: "Amplifier" },
+        { text: "Return the favor by helping them next time", type: "Supporter" },
+        { text: "Tell them right away that they're really good at this", type: "Spark" },
+        { text: "Send a heartfelt message thanking them for taking the time to help", type: "Heartwriter" }
+      ]
+    },
+    {
+      text: "It's Friday afternoon and the team just survived a particularly chaotic week. What's most likely something you'd do first?",
+      answers: [
+        { text: "Send a direct message to someone who really helped you this week", type: "Heartwriter" },
+        { text: "Post a motivating message in the team chat saying how proud you are of the team", type: "Spark" },
+        { text: "Start a meme thread to mark the moment", type: "Cheerleader" },
+        { text: "Offer to help someone finish something before the weekend", type: "Supporter" },
+        { text: "Highlight someone's effort in the team chat for keeping everything on track", type: "Amplifier" }
+      ]
+    },
+    {
+      text: "During a Teams call, someone shares an idea but seems unsure about it. What do you do?",
+      answers: [
+        { text: "React enthusiastically in the chat or send the clapping hands emoji", type: "Cheerleader" },
+        { text: "Jump in and encourage them, saying it's a great idea", type: "Spark" },
+        { text: "Offer to connect after the meeting and help develop the idea", type: "Supporter" },
+        { text: "Make sure the team recognizes their idea and gives them credit", type: "Amplifier" },
+        { text: "Send them a message later saying you appreciated their input", type: "Heartwriter" }
+      ]
+    },
+    {
+      text: "You notice a teammate quietly helping others all week, but no one has mentioned it. What do you do?",
+      answers: [
+        { text: "Post a message in the team chat recognizing how helpful they've been", type: "Spark" },
+        { text: "Offer help so they're not carrying everything on their own", type: "Supporter" },
+        { text: "Give them a 'True supporter' badge", type: "Cheerleader" },
+        { text: "Send them a personal message thanking them for the difference they've been making", type: "Heartwriter" },
+        { text: "Let the manager know so the effort is visible", type: "Amplifier" }
+      ]
+    }
+  ];
+
+  const superpowers = {
+    Spark: {
+      emoji: "🌟",
+      name: "Spark",
+      desc1: "You lift people up with your words and positive energy. You have a gift for saying the right thing at the right moment \u2013 the kind of sentence that turns self-doubt into confidence and helps others see their own strength.",
+      desc2: "Thank you for being you! The encouragement you share so naturally can brighten someone's hardest day and remind them they are capable, valued, and not alone. People like you bring warmth to the team in ways that matter more than you might ever realize.",
+      closing: "A few words of appreciation can change someone's entire day. Keep encouraging, recognizing, supporting, and celebrating the people around you!"
+    },
+    Amplifier: {
+      emoji: "🔦",
+      name: "Amplifier",
+      desc1: "You make sure great work is seen and appreciated. You notice the effort behind the results and help shine a light on the people who made it happen, so no one's contribution fades into the background.",
+      desc2: "Thank you for being you! Because of people like you, others feel noticed and valued, sometimes in moments when they need it most. The way you recognize others reminds them that their work is seen and appreciated.",
+      closing: "A few words of appreciation can change someone's entire day. Keep encouraging, recognizing, supporting, and celebrating the people around you!"
+    },
+    Supporter: {
+      emoji: "🤝",
+      name: "Supporter",
+      desc1: "You show appreciation through action. When someone needs help, you step in, collaborate, and make sure no one has to carry the load alone.",
+      desc2: "Thank you for being you! Your quiet generosity, reliability, and willingness to help make the team feel safe, supported, and stronger together. The help you offer often means more to people than you may ever hear.",
+      closing: "A few words of appreciation can change someone's entire day. Keep encouraging, recognizing, supporting, and celebrating the people around you!"
+    },
+    Heartwriter: {
+      emoji: "💌",
+      name: "Heartwriter",
+      desc1: "You express appreciation through thoughtful, personal messages \u2013 the kind that make someone pause, smile, and feel truly seen.",
+      desc2: "Thank you for being you! Your words carry kindness and sincerity that people remember long after they read them. Sometimes a message from you becomes the reminder someone needed that their work and effort matter more than they might think.",
+      closing: "A few words of appreciation can change someone's entire day. Keep encouraging, recognizing, supporting, and celebrating the people around you!"
+    },
+    Cheerleader: {
+      emoji: "🎉",
+      name: "Cheerleader",
+      desc1: "You bring joy to the team by celebrating wins, milestones, and progress \u2013 big or small \u2013 and helping others feel that their work truly matters.",
+      desc2: "Thank you for being you! Your enthusiasm reminds the team to pause, smile, and appreciate how far we've come together. The energy you bring makes success feel shared and moments feel special.",
+      closing: "A few words of appreciation can change someone's entire day. Keep encouraging, recognizing, supporting, and celebrating the people around you!"
+    }
+  };
+
+  let currentQuestion = 0;
+  const scores = { Spark: 0, Amplifier: 0, Supporter: 0, Heartwriter: 0, Cheerleader: 0 };
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function updateProgress() {
+    const pct = (currentQuestion / questions.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+
+  function startQuiz() {
+    currentQuestion = 0;
+    Object.keys(scores).forEach(k => scores[k] = 0);
+    showQuestion();
+  }
+
+  function showQuestion() {
+    const q = questions[currentQuestion];
+    document.getElementById('questionNumber').textContent = `Question ${currentQuestion + 1} of ${questions.length}`;
+    document.getElementById('questionText').textContent = q.text;
+
+    const container = document.getElementById('answersContainer');
+    container.innerHTML = '';
+
+    // Shuffle answers for each render
+    const shuffled = [...q.answers].sort(() => Math.random() - 0.5);
+
+    shuffled.forEach(answer => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = answer.text;
+      btn.addEventListener('click', () => selectAnswer(btn, answer.type));
+      container.appendChild(btn);
+    });
+
+    updateProgress();
+    showScreen('questionScreen');
+  }
+
+  function selectAnswer(btn, type) {
+    // Prevent double-click
+    if (btn.classList.contains('selected')) return;
+
+    btn.classList.add('selected');
+    // Weighted score: later questions break ties
+    scores[type] += 1 + (currentQuestion * 0.1);
+
+    setTimeout(() => {
+      currentQuestion++;
+      if (currentQuestion < questions.length) {
+        showQuestion();
+      } else {
+        showResult();
+      }
+    }, 350);
+  }
+
+  function showResult() {
+    document.getElementById('progressFill').style.width = '100%';
+
+    // Find superpower with highest score
+    const winner = Object.entries(scores).reduce((a, b) => a[1] >= b[1] ? a : b)[0];
+    const sp = superpowers[winner];
+
+    document.getElementById('resultEmoji').textContent = sp.emoji;
+    document.getElementById('resultName').textContent = sp.name;
+    document.getElementById('resultDesc1').textContent = sp.desc1;
+    document.getElementById('resultDesc2').textContent = sp.desc2;
+    document.getElementById('resultClosing').textContent = sp.closing;
+
+    showScreen('resultScreen');
+  }
+
+  function restartQuiz() {
+    currentQuestion = 0;
+    Object.keys(scores).forEach(k => scores[k] = 0);
+    document.getElementById('progressFill').style.width = '0%';
+    showScreen('welcome');
+  }
+</script>
+
+</body>
+</html>
